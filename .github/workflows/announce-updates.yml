@@ -1,12 +1,16 @@
 # Publishes every new post in updates/ as a GitHub Release, so anyone watching
 # the repository (Watch → All Activity, or Custom → Releases) is notified, and
 # the releases feed works as an RSS feed of club updates.
+#
+# Run it manually (Actions → Announce new updates → Run workflow) to re-sync
+# the title and summary of every update's release after editing a post.
 name: Announce new updates
 
 on:
   push:
     paths:
       - "updates/**"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,27 +32,31 @@ jobs:
         run: |
           set -euo pipefail
 
-          # First push to the branch, or a force-push: compare against an empty tree.
-          if [[ "$BEFORE" =~ ^0+$ ]] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
-            BEFORE=$(git hash-object -t tree /dev/null)
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            files=$(git ls-files 'updates/*.md')
+          else
+            # First push to the branch, or a force-push: compare against an empty tree.
+            if [[ "$BEFORE" =~ ^0+$ ]] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+              BEFORE=$(git hash-object -t tree /dev/null)
+            fi
+            files=$(git diff --name-only --diff-filter=A "$BEFORE" "$GITHUB_SHA" -- 'updates/*.md')
           fi
 
-          git diff --name-only --diff-filter=A "$BEFORE" "$GITHUB_SHA" -- 'updates/*.md' \
-            | { grep -vE '^updates/(README|TEMPLATE)\.md$' || true; } \
+          echo "$files" \
+            | { grep -vE '^(updates/(README|TEMPLATE)\.md)?$' || true; } \
             | while IFS= read -r file; do
                 tag="update-$(basename "$file" .md)"
-                if gh release view "$tag" >/dev/null 2>&1; then
-                  echo "Release $tag already exists, skipping."
-                  continue
-                fi
-
                 title=$(sed -n 's/^# //p' "$file" | head -n 1)
-                url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${file}"
+                url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/HEAD/${file}"
                 {
                   # The date/from/type line and the one-paragraph summary.
                   awk 'NR > 1 && NF { print; print ""; if (++n == 2) exit }' "$file"
                   echo "**[Read the full update →](${url})**"
                 } > notes.md
 
-                gh release create "$tag" --title "${title:-$tag}" --notes-file notes.md --target "$GITHUB_SHA"
+                if gh release view "$tag" >/dev/null 2>&1; then
+                  gh release edit "$tag" --title "${title:-$tag}" --notes-file notes.md
+                else
+                  gh release create "$tag" --title "${title:-$tag}" --notes-file notes.md --target "$GITHUB_SHA"
+                fi
               done

@@ -22,6 +22,8 @@ Announcements, event news, recaps, news digests and explainers all go in [`updat
 4. Add the same row at the top of **Latest updates** in the [home page](README.md#latest-updates). Keep only the **five** most recent there.
 5. If it's an event, update [`events/README.md`](events/README.md) too.
 
+Once it's committed, a GitHub Action publishes it as a [release](https://github.com/jnanottamgy/NEXUS/releases), which notifies everyone watching the repo. If you later edit the title or summary of a posted update, go to **Actions → Announce new updates → Run workflow** to refresh its release.
+
 ## Roster changes
 
 When someone joins, leaves or changes role, update **all** of these in the same commit so nothing goes out of date:
