@@ -1,0 +1,51 @@
+name: Volunteer for an open role
+description: Express interest in an open NEXUS core team position.
+title: "[Join] "
+labels: ["recruitment"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for wanting to help run NEXUS! See [JOIN.md](https://github.com/jnanottamgy/NEXUS/blob/HEAD/JOIN.md) for what each role involves.
+
+        **This repository is public, so anyone can read what you write here.** Share only your name, year, branch and why you're interested.
+        **Don't** post your phone number, email address or USN. We'll reach out to you on campus.
+  - type: input
+    id: name
+    attributes:
+      label: Your name
+    validations:
+      required: true
+  - type: input
+    id: year-branch
+    attributes:
+      label: Year and branch
+      placeholder: "e.g. 2nd year, ECE"
+  - type: dropdown
+    id: role
+    attributes:
+      label: Which open position are you interested in?
+      description: You can pick more than one.
+      multiple: true
+      options:
+        - Finance Literacy & Economic Inscription Wing
+        - Corporate & Land Wing
+        - Miscellaneous Wing
+        - Dept of Creativity & Design
+        - Dept of Current Affairs & Public Relations
+        - Dept of IT
+        - Dept of Logistics
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this role, and what would you bring?
+      description: Skills, interests, past experience, or simply what you'd like to learn.
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: Anything you'd like us to see? (optional)
+      description: e.g. a design portfolio, writing sample, GitHub profile or LinkedIn.

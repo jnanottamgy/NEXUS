@@ -1,0 +1,54 @@
+# Publishes every new post in updates/ as a GitHub Release, so anyone watching
+# the repository (Watch → All Activity, or Custom → Releases) is notified, and
+# the releases feed works as an RSS feed of club updates.
+name: Announce new updates
+
+on:
+  push:
+    paths:
+      - "updates/**"
+
+permissions:
+  contents: write
+
+jobs:
+  announce:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish a release for each new update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          # First push to the branch, or a force-push: compare against an empty tree.
+          if [[ "$BEFORE" =~ ^0+$ ]] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            BEFORE=$(git hash-object -t tree /dev/null)
+          fi
+
+          git diff --name-only --diff-filter=A "$BEFORE" "$GITHUB_SHA" -- 'updates/*.md' \
+            | { grep -vE '^updates/(README|TEMPLATE)\.md$' || true; } \
+            | while IFS= read -r file; do
+                tag="update-$(basename "$file" .md)"
+                if gh release view "$tag" >/dev/null 2>&1; then
+                  echo "Release $tag already exists, skipping."
+                  continue
+                fi
+
+                title=$(sed -n 's/^# //p' "$file" | head -n 1)
+                url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${file}"
+                {
+                  # The date/from/type line and the one-paragraph summary.
+                  awk 'NR > 1 && NF { print; print ""; if (++n == 2) exit }' "$file"
+                  echo "**[Read the full update →](${url})**"
+                } > notes.md
+
+                gh release create "$tag" --title "${title:-$tag}" --notes-file notes.md --target "$GITHUB_SHA"
+              done

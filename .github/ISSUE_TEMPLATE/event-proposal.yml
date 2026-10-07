@@ -1,0 +1,79 @@
+name: Event proposal
+description: Pitch a session, workshop, talk, competition or quiz for NEXUS.
+title: "[Event] "
+labels: ["event"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Anyone can pitch an event. Leadership reviews proposals, and approved ones are picked up by the Event Management department.
+        This repository is public, so please don't include phone numbers, email addresses or USNs.
+  - type: input
+    id: event-name
+    attributes:
+      label: Event name
+      placeholder: "e.g. Budget Decoded 2027"
+    validations:
+      required: true
+  - type: dropdown
+    id: lead-unit
+    attributes:
+      label: Which wing or department should lead it?
+      options:
+        - Personal Finance & Investment Wing
+        - Finance Literacy & Economic Inscription Wing
+        - Cryptocurrency & Trading Wing
+        - Corporate & Land Wing
+        - Miscellaneous Wing
+        - Dept of IT
+        - Dept of Creativity & Design
+        - Dept of Current Affairs & Public Relations
+        - Dept of Event Management
+        - Dept of Logistics
+        - Dept of Social Media
+        - Not sure / club-wide
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Format
+      options:
+        - Talk / guest lecture
+        - Workshop / hands-on session
+        - Competition / challenge
+        - Quiz
+        - Panel discussion
+        - Screening + discussion
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What is it, and why should members come?
+      description: A few lines on the idea and what attendees will take away.
+    validations:
+      required: true
+  - type: input
+    id: timing
+    attributes:
+      label: Proposed date or time frame
+      placeholder: "e.g. week after the Union Budget, or early November"
+  - type: input
+    id: audience
+    attributes:
+      label: Who is it for?
+      placeholder: "e.g. first-years, everyone, members interested in trading"
+  - type: textarea
+    id: needs
+    attributes:
+      label: What would it need?
+      description: Venue, speaker, budget, equipment, design, registrations, and so on.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Content rules
+      options:
+        - label: This event is educational and won't promote specific stocks, tokens, trading platforms or paid courses.
+          required: true

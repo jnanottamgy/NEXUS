@@ -1,0 +1,20 @@
+name: Correction
+description: Report something wrong or out of date in this repository.
+title: "[Fix] "
+labels: ["correction"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where is it?
+      description: The page or file, or paste a link to it.
+      placeholder: "e.g. README.md, the Departments table"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong, and what should it say?
+      description: If it's a fact, a link to the source helps us fix it quickly.
+    validations:
+      required: true

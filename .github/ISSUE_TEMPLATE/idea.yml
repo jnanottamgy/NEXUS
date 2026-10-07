@@ -1,0 +1,40 @@
+name: Idea or topic
+description: Suggest a topic for a session, post or explainer, or a resource we should add.
+title: "[Idea] "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got something you'd like NEXUS to cover? Tell us. Small ideas welcome.
+        This repository is public, so please don't include phone numbers, email addresses or USNs.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of idea is it?
+      options:
+        - Topic for a session or workshop
+        - Topic for a post, reel or explainer
+        - A learning resource to add
+        - An improvement to the club or this repo
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Links to sources are very welcome.
+    validations:
+      required: true
+  - type: dropdown
+    id: unit
+    attributes:
+      label: Which wing does it fit best?
+      options:
+        - Personal Finance & Investment
+        - Finance Literacy & Economic Inscription
+        - Cryptocurrency & Trading
+        - Corporate & Land
+        - Miscellaneous
+        - Not sure
